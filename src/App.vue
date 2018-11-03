@@ -34,13 +34,26 @@
             @change="changeCompany"
           />
         </v-flex>
-        <candlestick-demo v-model="dataset" />
+        <candlestick-demo
+          id="demo"
+          ref="demo"
+          v-model="dataset"
+          :n-tweet="6"
+        />
       </v-container>
     </v-content>
-    <v-footer align-center class="pa-3">
+    <v-footer
+      align-center
+      class="pa-3"
+    >
+      <v-layout
+        row
+        wrap
+      >
         <v-flex class="text-xs-center">
-          duckingod &copy; 2018
+          duckingod, cjchen &copy; 2018
         </v-flex>
+      </v-layout>
     </v-footer>
   </v-app>
 </template>
@@ -48,9 +61,9 @@
 <script>
 import CandlestickDemo from './components/CandlestickDemo.vue'
 
-const createDataset = () => {
+const createDataset = name => {
   let lorem = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent sit amet pellentesque nisi. Nullam a dui pretium, ultrices erat eu, tincidunt nisl. Vivamus interdum ligula commodo, venenatis diam vel, volutpat turpis. Sed fermentum congue erat gravida sodales. Donec nec magna in turpis pellentesque ullamcorper id et tortor. Maecenas vitae justo tellus. Fusce feugiat, velit eu placerat condimentum, nisl libero finibus turpis, sit amet rutrum odio dolor ac eros. Pellentesque cursus neque a tellus condimentum, et rhoncus augue maximus. Cras commodo porttitor lectus nec consequat. Proin et augue sed nulla egestas sollicitudin scelerisque id dolor.'
-  let stockData = [
+  let stock = [
     {x: new Date(2012,1,1),y:[5198, 5629, 5159, 5385]},
     {x: new Date(2012,1,2),y:[5366, 5499, 5135, 5295]},
     {x: new Date(2012,1,3),y:[5296, 5378, 5154, 5248]},
@@ -75,14 +88,13 @@ const createDataset = () => {
     {x: new Date(2012,1,22),y:[6289, 6342, 5972, 6176]},
     {x: new Date(2012,1,23),y:[6171, 6415, 6129, 6304]}
   ]
-  // targetData.slice(1).unshift(stockData[0].y[0] + 10)
   let rnd = n => Math.floor(Math.random()*n)
   let n = rnd(5) + 15
-  let i = rnd(stockData.length - n)
-  stockData = stockData.slice(i, i + n)
-  let targetData = stockData.map(a => ({ x: a.x, y: Math.floor(a.y[0] * (Math.random() * 0.1 + 1)) }))
-  let dates = stockData.map(d => d.x)
-  let tweetData = dates.map(d =>
+  let i = rnd(stock.length - n)
+  stock = stock.slice(i, i + n)
+  let targets = stock.map(a => ({ x: a.x, y: Math.floor(a.y[0] * (Math.random() * 0.1 + 1)) }))
+  let dates = stock.map(d => d.x)
+  let tweets = dates.map(d =>
     [0, 0, 0, 0, 0, 0].map(a =>
       ({ 
         content: lorem.substr(rnd(200), rnd(70)+30) + `. (${d.getMonth()} / ${d.getDate()})`,
@@ -91,11 +103,10 @@ const createDataset = () => {
     )
   )
   let tmp = {}
-  for (let i = 0; i < dates.length; i++) tmp[dates[i]] = tweetData[i]
-  tweetData = tmp
-  return {dates, stockData, targetData, tweetData}
+  for (let i = 0; i < dates.length; i++) tmp[dates[i]] = tweets[i]
+  tweets = tmp
+  return {name, dates, stock, targets, tweets}
 }
-// let {dates, stockData, targetData, tweetData} = createDataset()
 
 export default {
   name: 'App',
@@ -105,18 +116,22 @@ export default {
   data () {
     let companyNames = ['Apple', 'Google', 'HTC', 'CCC']
     let companys = {}
-    let company = companyNames[0]
-    for (let c of companyNames) companys[c] = createDataset()
+    for (let c of companyNames) companys[c] = createDataset(c)
     return {
       companys: companys,
       companyList: companyNames,
-      company: company,
-      dataset: companys[company]
+      company: companyNames[0],
+      dataset: companys[companyNames[0]]
     }
   },
   methods: {
     changeCompany(company) {
       this.dataset = this.companys[company]
+      // scroll to demo
+      let e = this.$el.querySelector("#demo")
+      this.$nextTick(() => {
+        window.scrollTo(0, e.offsetTop)
+      })
     }
   }
 }

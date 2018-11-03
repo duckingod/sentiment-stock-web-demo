@@ -4,7 +4,7 @@
       ref="chart"
       style="height: 400px; width: 100%;"
     />
-    <v-list>
+    <v-list style="height=400px;">
       <v-subheader>
         Tweets - {{ lastDate.toLocaleDateString() }}
       </v-subheader>
@@ -26,23 +26,20 @@
 <script>
 export default {
   props: {
-    value: {
-      type: Object,
-      default: () => null
-    }
+    value: { type: Object, default: () => null },
+    nTweet: { type: Number, default: () => 4 }
   },
   data() {
     return {
       chart: null,
-      dataset: null,
-      tweets: [],
-      lastDate: { toLocaleDateString() { return "" } },
+      tweets: null,
+      lastDate: { toLocaleDateString: () => '' },
       chartOptions: {
         animationEnabled: true,
-        // theme: "light1", // "light1", "light2", "dark1", "dark2"
+        theme: 'light1',
         exportEnabled: true,
-        title: { text: "Netflix Stock Price in 2016" },
-        subtitles: [{ text: "Weekly Averages" }],
+        title: { text: '' },
+        subtitles: [{ text: '' }],
         axisX: {
           interval: 1,
           intervalType: "day",
@@ -64,9 +61,8 @@ export default {
           {
             name: 'Stock',
             type: 'candlestick',
-            yValueFormatString: "$##0.00",
             risingColor: "green",
-            fallingColor: "red",      
+            fallingColor: "red",
             dataPoints: null
           },
           {
@@ -89,28 +85,24 @@ export default {
   methods: {
     reset() {
       this.lastDate = { toLocaleDateString() { return "" } }
-      this.tweets = []
+      this.tweets = Array.from(Array(this.nTweet).keys()).map(_ => ({ content: '', author: '' }))
 
-      let v = this.value
-      this.dataset = { dates: v.dates, stock: v.stockData, target: v.targetData, tweets: v.tweetData }
-      this.chartOptions.data[0].dataPoints = this.dataset.stock
-      this.chartOptions.data[1].dataPoints = this.dataset.target
+      this.chartOptions.data[0].dataPoints = this.value.stock
+      this.chartOptions.data[1].dataPoints = this.value.targets
+      this.chartOptions.subtitles[0].text = this.value.name
 
       this.chart = new CanvasJS.Chart(this.$refs.chart, this.chartOptions)
 
-      let dataSeries;
-      for(let i = 0; i < this.chart.options.data.length; i++){
-        dataSeries = this.chart.options.data[i];
-        for(let j = 0; j < dataSeries.dataPoints.length; j++){
-          dataSeries.dataPoints[j].color = (dataSeries.dataPoints[j].y[0] <= dataSeries.dataPoints[j].y[3]) ? (dataSeries.risingColor ? dataSeries.risingColor : dataSeries.color) : (dataSeries.fallingColor ? dataSeries.fallingColor : dataSeries.color);
-        }
-      }
+      let {r, f, c} = {r: 'risingColor', 'f': 'fallingColor', 'c': 'color'}
+      for(let data of this.chart.options.data)
+        for(let point of data.dataPoints)
+          point.color = (point.y[0] <= point.y[3] ? data[r] : data[f]) || data[c]
       this.chart.render()
     },
     updateTweet(d) {
       if (this.lastDate !== d) {
         this.lastDate = d
-        this.tweets = this.dataset.tweets[d]
+        this.tweets = this.value.tweets[d].slice(0, this.nTweet)
       }
     }
   }
