@@ -5,7 +5,7 @@
         <span>Vuetify</span>
         <span class="font-weight-light">MATERIAL DESIGN</span>
       </v-toolbar-title>
-      <v-spacer></v-spacer>
+      <v-spacer />
       <v-btn
         flat
         href="https://github.com/vuetifyjs/vuetify/releases/latest"
@@ -16,19 +16,17 @@
     </v-toolbar>
 
     <v-content>
-      <candelstick-chart/>
+      <candelstick-chart />
     </v-content>
   </v-app>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld'
 import CandelstickChart from './components/CandelstickChart.vue'
 
 export default {
   name: 'App',
   components: {
-    HelloWorld,
     CandelstickChart 
   },
   data () {
