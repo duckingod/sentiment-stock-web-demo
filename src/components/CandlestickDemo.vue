@@ -2,10 +2,10 @@
   <v-content>
     <div
       ref="chart"
-      style="height: 300px; width: 100%;"
+      style="height: 400px; width: 100%;"
     />
     <v-list>
-      <v-subheader v-if="lastDate !== null">
+      <v-subheader>
         Tweets - {{ lastDate.toLocaleDateString() }}
       </v-subheader>
       <v-list-tile
@@ -18,7 +18,6 @@
         <v-list-tile-action>
           <v-list-tile-sub-title> {{ tweet.author }} </v-list-tile-sub-title>
         </v-list-tile-action>
-        
       </v-list-tile>
     </v-list>
   </v-content>
@@ -37,7 +36,7 @@ export default {
       chart: null,
       dataset: null,
       tweets: [],
-      lastDate: null,
+      lastDate: { toLocaleDateString() { return "" } },
       chartOptions: {
         animationEnabled: true,
         // theme: "light1", // "light1", "light2", "dark1", "dark2"
@@ -58,7 +57,7 @@ export default {
             let {x, y} = e.entries[0].dataPoint
             let t = e.entries[1].dataPoint.y
             this.updateTweet(x)
-            return `Date: ${x}<br /><strong>Target: <strong>${t}</strong><br />Price:</strong><br />Open: ${y[0]}, Close: ${y[3]}<br />High: ${y[1]}, Low: ${y[2]}`
+            return `Date: ${x.toLocaleDateString()}<br /><strong>Target: <strong>${t}</strong><br />Price:</strong><br />Open: ${y[0]}, Close: ${y[3]}<br />High: ${y[1]}, Low: ${y[2]}`
           }
         },
         data: [
@@ -110,12 +109,10 @@ export default {
     },
     updateTweet(d) {
       if (this.lastDate !== d) {
-        console.log('Hi')
         this.lastDate = d
         this.tweets = this.dataset.tweets[d]
       }
     }
   }
 }
-
 </script>

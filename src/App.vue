@@ -34,14 +34,19 @@
             @change="changeCompany"
           />
         </v-flex>
-        <candelstick-chart v-model="dataset" />
+        <candlestick-demo v-model="dataset" />
       </v-container>
     </v-content>
+    <v-footer align-center class="pa-3">
+        <v-flex class="text-xs-center">
+          duckingod &copy; 2018
+        </v-flex>
+    </v-footer>
   </v-app>
 </template>
 
 <script>
-import CandelstickChart from './components/CandelstickChart.vue'
+import CandlestickDemo from './components/CandlestickDemo.vue'
 
 const createDataset = () => {
   let lorem = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent sit amet pellentesque nisi. Nullam a dui pretium, ultrices erat eu, tincidunt nisl. Vivamus interdum ligula commodo, venenatis diam vel, volutpat turpis. Sed fermentum congue erat gravida sodales. Donec nec magna in turpis pellentesque ullamcorper id et tortor. Maecenas vitae justo tellus. Fusce feugiat, velit eu placerat condimentum, nisl libero finibus turpis, sit amet rutrum odio dolor ac eros. Pellentesque cursus neque a tellus condimentum, et rhoncus augue maximus. Cras commodo porttitor lectus nec consequat. Proin et augue sed nulla egestas sollicitudin scelerisque id dolor.'
@@ -73,13 +78,14 @@ const createDataset = () => {
   // targetData.slice(1).unshift(stockData[0].y[0] + 10)
   let rnd = n => Math.floor(Math.random()*n)
   let n = rnd(5) + 15
-  stockData = stockData.slice(rnd(stockData.length - n), n)
+  let i = rnd(stockData.length - n)
+  stockData = stockData.slice(i, i + n)
   let targetData = stockData.map(a => ({ x: a.x, y: Math.floor(a.y[0] * (Math.random() * 0.1 + 1)) }))
   let dates = stockData.map(d => d.x)
   let tweetData = dates.map(d =>
     [0, 0, 0, 0, 0, 0].map(a =>
       ({ 
-        content: lorem.substr(rnd(200), rnd(70)+30) + ` At ${d.getDate()} / ${d.getMonth()}`,
+        content: lorem.substr(rnd(200), rnd(70)+30) + `. (${d.getMonth()} / ${d.getDate()})`,
         author: lorem.split(' ')[rnd(50)]
       })
     )
@@ -94,7 +100,7 @@ const createDataset = () => {
 export default {
   name: 'App',
   components: {
-    CandelstickChart 
+    CandlestickDemo
   },
   data () {
     let companyNames = ['Apple', 'Google', 'HTC', 'CCC']
@@ -109,9 +115,8 @@ export default {
     }
   },
   methods: {
-    changeCompany(e) {
-      this.dataset = createDataset()
-      console.log('Changed')
+    changeCompany(company) {
+      this.dataset = this.companys[company]
     }
   }
 }
