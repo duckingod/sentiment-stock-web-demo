@@ -16,15 +16,25 @@
     </v-toolbar>
 
     <v-content>
-      <v-container grid-list-md  text-xs-center>
-        <v-flex xs12 sm6 offset-sm3 d-flex justify-center>
+      <v-container
+        grid-list-md
+        text-xs-center
+      >
+        <v-flex
+          xs12
+          sm6
+          offset-sm3
+          d-flex
+        >
           <v-select
-            :items="items"
-            label="Company"
+            v-model="company"
             text-xs-center
-          ></v-select>
+            :items="companyList"
+            label="Company"
+            @change="changeCompany"
+          />
         </v-flex>
-        <candelstick-chart />
+        <candelstick-chart v-model="dataset" />
       </v-container>
     </v-content>
   </v-app>
@@ -62,7 +72,7 @@ const createDataset = () => {
   ]
   // targetData.slice(1).unshift(stockData[0].y[0] + 10)
   let rnd = n => Math.floor(Math.random()*n)
-  let n = rnd(5) + 10
+  let n = rnd(5) + 15
   stockData = stockData.slice(rnd(stockData.length - n), n)
   let targetData = stockData.map(a => ({ x: a.x, y: Math.floor(a.y[0] * (Math.random() * 0.1 + 1)) }))
   let dates = stockData.map(d => d.x)
@@ -87,8 +97,21 @@ export default {
     CandelstickChart 
   },
   data () {
+    let companyNames = ['Apple', 'Google', 'HTC', 'CCC']
+    let companys = {}
+    let company = companyNames[0]
+    for (let c of companyNames) companys[c] = createDataset()
     return {
-      items: ['a', 'b', 'c']
+      companys: companys,
+      companyList: companyNames,
+      company: company,
+      dataset: companys[company]
+    }
+  },
+  methods: {
+    changeCompany(e) {
+      this.dataset = createDataset()
+      console.log('Changed')
     }
   }
 }
