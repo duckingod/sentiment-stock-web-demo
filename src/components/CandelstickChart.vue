@@ -50,9 +50,11 @@ const createDataset = () => {
     {x: new Date(2012,1,22),y:[6289, 6342, 5972, 6176]},
     {x: new Date(2012,1,23),y:[6171, 6415, 6129, 6304]}
   ]
+  // targetData.slice(1).unshift(stockData[0].y[0] + 10)
   let rnd = n => Math.floor(Math.random()*n)
   let n = rnd(5) + 10
   stockData = stockData.slice(rnd(stockData.length - n), n)
+  let targetData = stockData.map(a => ({ x: a.x, y: Math.floor(a.y[0] * (Math.random() * 0.1 + 1)) }))
   let dates = stockData.map(d => d.x)
   let tweetData = dates.map(d =>
     [0, 0, 0, 0, 0, 0].map(a =>
@@ -65,9 +67,9 @@ const createDataset = () => {
   let tmp = {}
   for (let i = 0; i < dates.length; i++) tmp[dates[i]] = tweetData[i]
   tweetData = tmp
-  return {dates, stockData, tweetData}
+  return {dates, stockData, targetData, tweetData}
 }
-let {dates, stockData, tweetData} = createDataset()
+let {dates, stockData, targetData, tweetData} = createDataset()
 
 // Candlestick
 export default {
@@ -82,7 +84,8 @@ export default {
       chart: null,
       dataset: {
         stock: stockData,
-        tweets: tweetData
+        tweets: tweetData,
+        target: targetData
       },
       tweets: [],
       lastDate: null,
@@ -101,19 +104,29 @@ export default {
         axisY: { includeZero: false, prefix: "$", title: "Price" },
         backgroundColor: 'transparent',
         toolTip: {
+          shared: true,
           contentFormatter: e => {
             let {x, y} = e.entries[0].dataPoint
+            let t = e.entries[1].dataPoint.y
             this.updateTweet(x)
-            return `Date: ${x}<br /><strong>Price:</strong><br />Open: ${y[0]}, Close: ${y[3]}<br />High: ${y[1]}, Low: ${y[2]}`
+            return `Date: ${x}<br /><strong>Target: <strong>${t}</strong><br />Price:</strong><br />Open: ${y[0]}, Close: ${y[3]}<br />High: ${y[1]}, Low: ${y[2]}`
           }
         },
-        data: [{
-          type: "candlestick",
-          yValueFormatString: "$##0.00",
-          risingColor: "green",
-          fallingColor: "red",      
-          dataPoints: stockData
-        }]
+        data: [
+          {
+            name: 'Stock',
+            type: 'candlestick',
+            yValueFormatString: "$##0.00",
+            risingColor: "green",
+            fallingColor: "red",      
+            dataPoints: stockData
+          },
+          {
+            name: 'Target',
+            type: 'line',
+            dataPoints: targetData
+          }
+        ]
       }
     }
   },
