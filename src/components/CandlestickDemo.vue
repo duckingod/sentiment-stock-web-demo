@@ -1,12 +1,12 @@
 <template>
-  <v-content>
+  <v-container>
     <div
       ref="chart"
       style="height: 400px; width: 100%;"
     />
     <v-list style="height=400px;">
       <v-subheader>
-        Tweets - {{ lastDate.toLocaleDateString() }}
+        Tweets - {{ dates[lastDate].toLocaleDateString() }}
       </v-subheader>
       <v-list-tile
         v-for="(tweet, i) in tweets"
@@ -24,7 +24,7 @@
         -->
       </v-list-tile>
     </v-list>
-  </v-content>
+  </v-container>
 </template>
 
 <script>
@@ -40,7 +40,8 @@ export default {
     return {
       chart: null,
       tweets: null,
-      lastDate: { toLocaleDateString: () => '' },
+      lastDate: 0,
+      dates: [{ toLocaleDateString: () => "" }],
       chartOptions: {
         animationEnabled: true,
         theme: 'light1',
@@ -49,8 +50,6 @@ export default {
         subtitles: [{ text: '' }],
         axisX: {
           interval: 1,
-          intervalType: "day",
-          valueFormatString: "MMM-DD",
           labelAngle: -45
         },
         axisY: { includeZero: false, prefix: "$", title: "Price" },
@@ -61,7 +60,7 @@ export default {
             let {x, y} = e.entries[0].dataPoint
             let t = e.entries[1].dataPoint.y
             this.updateTweet(x)
-            return `Date: ${x.toLocaleDateString()}<br /><strong>Target: <strong>${t}</strong><br />Price:</strong><br />Open: ${y[0]}, Close: ${y[3]}<br />High: ${y[1]}, Low: ${y[2]}`
+            return `Date: ${this.dates[x].toLocaleDateString()}<br /><strong>Target: <strong>${t}</strong><br />Price:</strong><br />Open: ${y[0]}, Close: ${y[3]}<br />High: ${y[1]}, Low: ${y[2]}`
           }
         },
         data: [
@@ -91,9 +90,9 @@ export default {
   },
   methods: {
     reset() {
-      this.lastDate = { toLocaleDateString() { return "" } }
+      this.lastDate = 0
       this.tweets = Array.from(Array(this.nTweet).keys()).map(_ => ({ content: '', author: '' }))
-
+      this.dates = this.value.dates
       this.chartOptions.data[0].dataPoints = this.value.stock
       this.chartOptions.data[1].dataPoints = this.value.targets
       this.chartOptions.title.text = this.value.name
@@ -109,7 +108,7 @@ export default {
     updateTweet(d) {
       if (this.lastDate !== d) {
         this.lastDate = d
-        this.tweets = _.sampleSize(this.value.tweets[d], this.nTweet)
+        this.tweets = _.sampleSize(this.value.tweets[this.dates[d]], this.nTweet)
       }
     }
   }

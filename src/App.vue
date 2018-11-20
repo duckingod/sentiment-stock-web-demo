@@ -34,12 +34,19 @@
             @change="changeCompany"
           />
         </v-flex>
-        <candlestick-demo
-          id="demo"
-          ref="demo"
-          v-model="dataset"
-          :n-tweet="6"
-        />
+        <v-flex
+          xs12
+          sm10
+          offset-sm1
+          d-flex
+        >
+          <candlestick-demo
+            id="demo"
+            ref="demo"
+            v-model="dataset"
+            :n-tweet="6"
+          />
+        </v-flex>
       </v-container>
     </v-content>
     <v-footer
@@ -77,10 +84,10 @@ const buildDataset = jsonData => {
     for (let i in dates) {
       let ohlc = [c.open[i], c.high[i], c.low[i], c.close[i]]
       ohlc = ohlc.map(round)
-      stock.push({ x: dates[i], y: ohlc })
+      stock.push({ x: Number(i), y: ohlc, label: dates[i].toLocaleDateString() })
       // offset 1 day
       if (i)
-        targets.push({ x: dates[i], y: round(Number(c.price_target[i-1]))})
+        targets.push({ x: Number(i), y: round(Number(c.price_target[i-1])), label: dates[i].toLocaleDateString() })
     }
     data[name] = {name, dates, tweets, stock, targets}
   }
