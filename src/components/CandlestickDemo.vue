@@ -24,6 +24,7 @@
 </template>
 
 <script>
+import _ from 'lodash'
 export default {
   props: {
     value: { type: Object, default: () => null },
@@ -74,7 +75,7 @@ export default {
       }
     }
   },
-  watch: { 
+  watch: {
     value(newVal, oldVal) {
       this.reset()
     }
@@ -102,7 +103,7 @@ export default {
     updateTweet(d) {
       if (this.lastDate !== d) {
         this.lastDate = d
-        this.tweets = this.value.tweets[d].slice(0, this.nTweet)
+        this.tweets = _.sampleSize(this.value.tweets[d], this.nTweet)
       }
     }
   }

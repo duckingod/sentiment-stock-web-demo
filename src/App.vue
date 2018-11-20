@@ -60,8 +60,28 @@
 
 <script>
 import CandlestickDemo from './components/CandlestickDemo.vue'
+import jsonData from './annotated-data'
 
-const createDataset = name => {
+const buildDataset = jsonData => {
+  let data = {}
+  for (let c of jsonData) {
+    let name = c.target
+    let dates = c.date.map(d => new Date(d))
+    let tweets = {}
+    for (let i in c.tweet)
+      tweets[dates[i]] = c.tweet[i].tweet.map(t => ({ author: 'nan', content: t}))
+    let stock = []
+    let targets = []
+    for (let i in dates) {
+      stock.push({ x: dates[i], y: [c.open[i], c.high[i], c.low[i], c.close[i]] })
+      targets.push({ x: dates[i], y: c.adj_close[i] })
+    }
+    data[name] = {name, dates, tweets, stock, targets}
+  }
+  return data
+}
+
+const simulateDataset = name => {
   let lorem = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent sit amet pellentesque nisi. Nullam a dui pretium, ultrices erat eu, tincidunt nisl. Vivamus interdum ligula commodo, venenatis diam vel, volutpat turpis. Sed fermentum congue erat gravida sodales. Donec nec magna in turpis pellentesque ullamcorper id et tortor. Maecenas vitae justo tellus. Fusce feugiat, velit eu placerat condimentum, nisl libero finibus turpis, sit amet rutrum odio dolor ac eros. Pellentesque cursus neque a tellus condimentum, et rhoncus augue maximus. Cras commodo porttitor lectus nec consequat. Proin et augue sed nulla egestas sollicitudin scelerisque id dolor.'
   let stock = [
     {x: new Date(2012,1,1),y:[5198, 5629, 5159, 5385]},
@@ -114,9 +134,8 @@ export default {
     CandlestickDemo
   },
   data () {
-    let companyNames = ['Apple', 'Google', 'HTC', 'CCC']
-    let companys = {}
-    for (let c of companyNames) companys[c] = createDataset(c)
+    let companys = buildDataset(jsonData)
+    let companyNames = Object.keys(companys)
     return {
       companys: companys,
       companyList: companyNames,
