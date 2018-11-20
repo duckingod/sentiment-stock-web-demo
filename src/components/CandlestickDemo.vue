@@ -13,7 +13,9 @@
         :key="i"
       >
         <v-list-tile-content>
-          <v-list-tile-title> {{ tweet.content }} </v-list-tile-title>
+          <v-list-tile-title>
+            <sentiment-text :text="tweet.content" />
+          </v-list-tile-title>
         </v-list-tile-content>
         <!--
         <v-list-tile-action>
@@ -26,8 +28,10 @@
 </template>
 
 <script>
+import SentimentText from './SentimentText'
 import _ from 'lodash'
 export default {
+  components: { SentimentText },
   props: {
     value: { type: Object, default: () => null },
     nTweet: { type: Number, default: () => 4 }
