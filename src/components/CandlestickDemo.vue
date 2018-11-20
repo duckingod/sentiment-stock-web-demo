@@ -15,9 +15,11 @@
         <v-list-tile-content>
           <v-list-tile-title> {{ tweet.content }} </v-list-tile-title>
         </v-list-tile-content>
+        <!--
         <v-list-tile-action>
           <v-list-tile-sub-title> {{ tweet.author }} </v-list-tile-sub-title>
         </v-list-tile-action>
+        -->
       </v-list-tile>
     </v-list>
   </v-content>
@@ -90,7 +92,7 @@ export default {
 
       this.chartOptions.data[0].dataPoints = this.value.stock
       this.chartOptions.data[1].dataPoints = this.value.targets
-      this.chartOptions.subtitles[0].text = this.value.name
+      this.chartOptions.title.text = this.value.name
 
       this.chart = new CanvasJS.Chart(this.$refs.chart, this.chartOptions)
 

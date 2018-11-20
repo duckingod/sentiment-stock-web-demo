@@ -60,10 +60,13 @@
 
 <script>
 import CandlestickDemo from './components/CandlestickDemo.vue'
-import jsonData from './annotated-data'
+//import jsonData from './annotated-data'
+import jsonData from './latest_demo_info.json'
 
 const buildDataset = jsonData => {
   let data = {}
+  let digLen = 1000
+  const round = i => Math.floor(i * digLen) / digLen
   for (let c of jsonData) {
     let name = c.target
     let dates = c.date.map(d => new Date(d))
@@ -73,8 +76,12 @@ const buildDataset = jsonData => {
     let stock = []
     let targets = []
     for (let i in dates) {
-      stock.push({ x: dates[i], y: [c.open[i], c.high[i], c.low[i], c.close[i]] })
-      targets.push({ x: dates[i], y: c.adj_close[i] })
+      let ohlc = [c.open[i], c.high[i], c.low[i], c.close[i]]
+      ohlc = ohlc.map(round)
+      stock.push({ x: dates[i], y: ohlc })
+      // offset 1 day
+      if (i)
+        targets.push({ x: dates[i], y: round(c.adj_close[i-1])})
     }
     data[name] = {name, dates, tweets, stock, targets}
   }
