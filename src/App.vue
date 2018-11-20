@@ -60,7 +60,6 @@
 
 <script>
 import CandlestickDemo from './components/CandlestickDemo.vue'
-//import jsonData from './annotated-data'
 import jsonData from './latest_demo_info.json'
 
 const buildDataset = jsonData => {
@@ -81,7 +80,7 @@ const buildDataset = jsonData => {
       stock.push({ x: dates[i], y: ohlc })
       // offset 1 day
       if (i)
-        targets.push({ x: dates[i], y: round(c.adj_close[i-1])})
+        targets.push({ x: dates[i], y: round(Number(c.price_target[i-1]))})
     }
     data[name] = {name, dates, tweets, stock, targets}
   }
