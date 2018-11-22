@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve --port 8888",
+    "update": "node update.js",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "build:storybook": "vue-cli-service build:storybook -c config/storybook",
