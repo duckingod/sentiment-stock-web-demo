@@ -57,7 +57,8 @@
         wrap
       >
         <v-flex class="text-xs-center">
-          duckingod, cjchen &copy; 2018
+          <a :href="config.paper.url">{{ config.paper.title }}</a>,
+          <a :href="config.github.url">github</a> &copy; 2018
         </v-flex>
       </v-layout>
     </v-footer>
@@ -67,6 +68,7 @@
 <script>
 import CandlestickDemo from './components/CandlestickDemo.vue'
 import jsonData from './latest_demo_info.json'
+import config from './config.json'
 
 const buildDataset = jsonData => {
   let data = {}
@@ -152,7 +154,8 @@ export default {
       companys: companys,
       companyList: companyNames,
       company: companyNames[0],
-      dataset: companys[companyNames[0]]
+      dataset: companys[companyNames[0]],
+      config: config
     }
   },
   methods: {

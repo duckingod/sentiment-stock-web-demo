@@ -6,7 +6,7 @@ if (path) {
     console.log(new Date())
       console.log('Copied!')
     copy(path, './src/latest_demo_info.json')
-  }, 300 * 1e3)
+  }, 3600 * 1e3)
 } else {
   console.log('No env var: DATA_PATH QQ')
 }

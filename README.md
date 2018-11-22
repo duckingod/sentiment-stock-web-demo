@@ -1,4 +1,6 @@
-# ji-paper-demo
+# Numeral Understanding in Financial Tweets for Fine-grained Crowd-based Forecasting Demo
+
+[paper](https://arxiv.org/abs/1809.05356)
 
 ## Project setup
 ```
