@@ -4,7 +4,10 @@
       ref="chart"
       style="height: 400px; width: 100%;"
     />
-    <v-list style="height=400px;">
+    <v-list
+      v-show="showTweets"
+      style="height=400px;"
+    >
       <v-subheader>
         Tweets - {{ dates[lastDate].toLocaleDateString() }}
       </v-subheader>
@@ -34,6 +37,7 @@ export default {
   components: { SentimentText },
   props: {
     value: { type: Object, default: () => null },
+    showTweets: {type: Boolean, default: true },
     nTweet: { type: Number, default: () => 4 }
   },
   data() {
@@ -91,7 +95,8 @@ export default {
   methods: {
     reset() {
       this.lastDate = 0
-      this.tweets = Array.from(Array(this.nTweet).keys()).map(_ => ({ content: '', author: '' }))
+      if (this.showTweets)
+        this.tweets = Array.from(Array(this.nTweet).keys()).map(_ => ({ content: '', author: '' }))
       this.dates = this.value.dates
       this.chartOptions.data[0].dataPoints = this.value.stock
       this.chartOptions.data[1].dataPoints = this.value.targets
@@ -106,6 +111,7 @@ export default {
       this.chart.render()
     },
     updateTweet(d) {
+      if (!this.showTweets) return
       if (this.lastDate !== d) {
         this.lastDate = d
         this.tweets = _.sampleSize(this.value.tweets[this.dates[d]], this.nTweet)

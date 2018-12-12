@@ -43,7 +43,8 @@
             id="demo"
             ref="demo"
             v-model="dataset"
-            :n-tweet="6"
+            :n-tweet="0"
+            :show-tweets="false"
           />
         </v-flex>
       </v-container>
