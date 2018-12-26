@@ -96,7 +96,7 @@ export default {
             name: 'DashedLine',
             type: 'line',
             lineDashType: "dash",
-            lineColor: 'darkGreen',
+            lineColor: 'darkRed',
             markerType: "none",
             connectNullData: false,
             dataPoints: null
