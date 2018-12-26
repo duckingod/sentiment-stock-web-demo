@@ -62,9 +62,17 @@ export default {
           shared: true,
           contentFormatter: e => {
             let {x, y} = e.entries[0].dataPoint
-            let t = e.entries[1].dataPoint.y
+            let date = `Date: ${this.dates[x].toLocaleDateString()}<br />`
+            let target
+            if (e.entries[1]) {
+              target = e.entries[1].dataPoint.y
+            } else {
+              target = e.entries[2].dataPoint.y
+            }
+            target = `<strong>Target: <strong>${target}</strong><br />`
+            let ohlc = `Price:</strong><br />Open: ${y[0]}, Close: ${y[3]}<br />High: ${y[1]}, Low: ${y[2]}`
             this.updateTweet(x)
-            return `Date: ${this.dates[x].toLocaleDateString()}<br /><strong>Target: <strong>${t}</strong><br />Price:</strong><br />Open: ${y[0]}, Close: ${y[3]}<br />High: ${y[1]}, Low: ${y[2]}`
+            return `${date}${target}${ohlc}`
           }
         },
         data: [
@@ -78,6 +86,17 @@ export default {
           {
             name: 'Target',
             type: 'line',
+            lineColor: 'darkRed',
+            connectNullData: false,
+            dataPoints: null
+          },
+          {
+            name: 'DashedLine',
+            type: 'line',
+            lineDashType: "dash",
+            lineColor: 'darkRed',
+            markerType: "none",
+            connectNullData: false,
             dataPoints: null
           }
         ]
@@ -99,15 +118,28 @@ export default {
         this.tweets = Array.from(Array(this.nTweet).keys()).map(_ => ({ content: '', author: '' }))
       this.dates = this.value.dates
       this.chartOptions.data[0].dataPoints = this.value.stock
-      this.chartOptions.data[1].dataPoints = this.value.targets
+
+      let targets = this.value.targets.map(p => ({...p, y: p.y || null}))
+      this.chartOptions.data[1].dataPoints = targets
+
+      let dashLines = targets.map(t => ({...t, y: null}))
+      for (let i in dashLines) {
+        i = Number(i)
+        if (targets[i+1] && targets[i+1].y === null && targets[i].y !== null)
+          dashLines[i].y = targets[i].y
+        else if (i && targets[i].y === null)
+          dashLines[i].y = dashLines[i-1].y
+        else if (i-1 >= 0 && targets[i].y !== null && targets[i-1].y === null)
+          dashLines[i].y = dashLines[i-1].y
+      }
+      this.chartOptions.data[2].dataPoints = dashLines
       this.chartOptions.title.text = this.value.name
-
       this.chart = new CanvasJS.Chart(this.$refs.chart, this.chartOptions)
-
       let {r, f, c} = {r: 'risingColor', 'f': 'fallingColor', 'c': 'color'}
       for(let data of this.chart.options.data)
         for(let point of data.dataPoints)
-          point.color = (point.y[0] <= point.y[3] ? data[r] : data[f]) || data[c]
+          if (point.y)
+            point.color = (point.y[0] <= point.y[3] ? data[r] : data[f]) || data[c]
       this.chart.render()
     },
     updateTweet(d) {
