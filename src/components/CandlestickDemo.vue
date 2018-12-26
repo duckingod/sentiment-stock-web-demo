@@ -65,9 +65,9 @@ export default {
             let date = `Date: ${this.dates[x].toLocaleDateString()}<br />`
             let target
             if (e.entries[1]) {
-              target = e.entries[1].dataPoint.y
+              target = e.entries[1].dataPoint.y.toFixed(3)
             } else if (e.entries[2]) {
-              target = e.entries[2].dataPoint.y
+              target = e.entries[2].dataPoint.y.toFixed(3)
             } else {
               target = 'NaN'
             }
