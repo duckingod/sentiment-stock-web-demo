@@ -96,7 +96,7 @@ export default {
             name: 'DashedLine',
             type: 'line',
             lineDashType: "dash",
-            lineColor: 'darkRed',
+            lineColor: 'darkGreen',
             markerType: "none",
             connectNullData: false,
             dataPoints: null
@@ -115,6 +115,13 @@ export default {
   },
   methods: {
     reset() {
+      const nextPoint = points => {
+        points = points.slice(1)
+        for (let i in points) {
+          if (points[i].y !== null) return { dist: Number(i) + 1, y: points[i].y}
+        }
+        return null
+      }
       this.lastDate = 0
       if (this.showTweets)
         this.tweets = Array.from(Array(this.nTweet).keys()).map(_ => ({ content: '', author: '' }))
@@ -127,12 +134,17 @@ export default {
       let dashLines = targets.map(t => ({...t, y: null}))
       for (let i in dashLines) {
         i = Number(i)
-        if (targets[i+1] && targets[i+1].y === null && targets[i].y !== null)
-          dashLines[i].y = targets[i].y
-        else if (i && targets[i].y === null)
-          dashLines[i].y = dashLines[i-1].y
-        else if (i-1 >= 0 && targets[i].y !== null && targets[i-1].y === null)
-          dashLines[i].y = dashLines[i-1].y
+        if (targets[i+1] && targets[i+1].y === null && targets[i].y !== null) {
+          let yp = targets[i].y
+          if (nextPoint(targets.slice(i))) {
+            let { dist, y } = nextPoint(targets.slice(i))
+            dashLines.slice(i, i + dist + 1).forEach((point, index) => {
+              point.y = yp + (y - yp) / dist * index
+            })
+          } else {
+            dashLines.slice(i).forEach(point => { point.y = yp })
+          }
+        }
       }
       this.chartOptions.data[2].dataPoints = dashLines
       this.chartOptions.title.text = this.value.name
