@@ -66,8 +66,10 @@ export default {
             let target
             if (e.entries[1]) {
               target = e.entries[1].dataPoint.y
-            } else {
+            } else if (e.entries[2]) {
               target = e.entries[2].dataPoint.y
+            } else {
+              target = 'NaN'
             }
             target = `<strong>Target: <strong>${target}</strong><br />`
             let ohlc = `Price:</strong><br />Open: ${y[0]}, Close: ${y[3]}<br />High: ${y[1]}, Low: ${y[2]}`
