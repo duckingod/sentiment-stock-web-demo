@@ -7,5 +7,6 @@ export default {
   "github": {
     "url": "https://github.com/duckingod/sentiment-stock-web-demo"
   },
-  "anonymous": Boolean(process.env.VUE_APP_ANONYMOUS)
+  "anonymous": Boolean(process.env.VUE_APP_ANONYMOUS),
+  "dataUrl": "http://nlg6.csie.ntu.edu.tw/FinNum/?demo=CrowdPT_Chart&tweet=0"
 }

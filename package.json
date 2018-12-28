@@ -11,6 +11,7 @@
     "serve:storybook": "vue-cli-service serve:storybook -p 6006 -c config/storybook"
   },
   "dependencies": {
+    "axios": "^0.18.0",
     "canvasjs": "^1.8.1",
     "chart.js": "^2.7.3",
     "cross-env": "^5.2.0",
