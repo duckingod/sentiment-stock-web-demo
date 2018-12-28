@@ -1,4 +1,4 @@
-{
+export default {
   "paper": {
     "url": "https://arxiv.org/abs/1809.05356",
     "title": "Numeral Understanding in Financial Tweets for Fine-grained Crowd-based Forecasting",
@@ -6,5 +6,6 @@
   },
   "github": {
     "url": "https://github.com/duckingod/sentiment-stock-web-demo"
-  }
+  },
+  "anonymous": Boolean(process.env.VUE_APP_ANONYMOUS)
 }

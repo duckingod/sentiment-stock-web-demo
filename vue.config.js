@@ -1,3 +1,3 @@
 module.exports = {
-  baseUrl: "/CrowdPT/"
+  baseUrl: `/${process.env.BASE_URL && (process.env.BASE_URL + '/')}`
 }

@@ -50,9 +50,11 @@
       </v-container>
     </v-content>
     <v-footer
+      v-if="!config.anonymous"
       align-center
       class="pa-3"
     >
+      Q{{ config.anonymous }}QQQ
       <v-layout
         row
         wrap
@@ -69,7 +71,7 @@
 <script>
 import CandlestickDemo from './components/CandlestickDemo.vue'
 import jsonData from './latest_demo_info.json'
-import config from './config.json'
+import config from './config'
 
 const buildDataset = jsonData => {
   let data = {}
